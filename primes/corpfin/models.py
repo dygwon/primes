@@ -1,3 +1,43 @@
 from django.db import models
 
-# Create your models here.
+
+class CompanyProfile(models.Model):
+    symbol = models.CharField(max_length=5)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    beta = models.DecimalField(max_digits=5, decimal_places=3)
+    vol_avg = models.PositiveIntegerField()
+    mkt_cap = models.PositiveBigIntegerField()
+    last_div = models.DecimalField(max_digits=5, decimal_places=2)
+    range = models.CharField(max_length=64)
+    changes = models.DecimalField(max_digits=10, decimal_places=2)
+    company_name = models.CharField(max_length=128)
+    currency = models.CharField(max_length=3)
+    cik = models.CharField(max_length=10)
+    isin = models.CharField(max_length=12)
+    cusip = models.CharField(max_length=9)
+    exchange = models.CharField(max_length=64)
+    exchange_short_name = models.CharField(max_length=16)
+    industry = models.CharField(max_length=128)
+    website = models.URLField()
+    description = models.TextField()
+    ceo = models.CharField(max_length=128)
+    sector = models.CharField(max_length=128)
+    country = models.CharField(max_length=3)
+    full_time_employees = models.CharField(max_length=8)
+    phone = models.CharField(max_length=15)
+    address = models.CharField(max_length=128)
+    city = models.CharField(max_length=128)
+    state = models.CharField(max_length=8)
+    zip = models.CharField(max_length=16)
+    dcf_diff = models.DecimalField(max_digits=15, decimal_places=5)
+    dcf = models.DecimalField(max_digits=24, decimal_places=14)
+    image = models.URLField()
+    ipo_date = models.CharField(max_length=10)
+    default_image = models.BooleanField()
+    is_etf = models.BooleanField()
+    is_actively_trading = models.BooleanField()
+    is_adr = models.BooleanField()
+    is_fund = models.BooleanField()
+
+    def __str__(self):
+        return self.symbol
