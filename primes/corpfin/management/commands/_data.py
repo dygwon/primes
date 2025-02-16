@@ -6,12 +6,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-TICKERS = ['LMT', 'RTX', 'NOC', 'GD', 'BA']
+TICKERS = ['LMT', 'RTX', 'NOC', 'GD', 'BA', 'PLTR']
 FMP_BASE_URL = 'https://financialmodelingprep.com/api/v3'
 FMP_API_KEY = os.environ['FMP_API_KEY']
 
-REPO_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-DATA_DIR = os.path.join(REPO_DIR, 'data')
+WORK_DIR = os.environ['WORK_DIR']
+DATA_DIR = os.path.join(WORK_DIR, 'fetched_data')
 
 
 def fetch_company_profile(ticker: str) -> dict:
@@ -22,7 +22,7 @@ def fetch_company_profile(ticker: str) -> dict:
     return data
 
 
-def save_company_profile(ticker: str, data: dict) -> None:
+def save_company_profile_json(ticker: str, data: dict) -> None:
     save_file_name = f'{ticker}.json'
     save_file_path = os.path.join(DATA_DIR, save_file_name)
     print(f'saving to {save_file_path}')
@@ -33,7 +33,7 @@ def save_company_profile(ticker: str, data: dict) -> None:
 def main():
     for ticker in TICKERS:
         data = fetch_company_profile(ticker)
-        save_company_profile(ticker, data)
+        save_company_profile_json(ticker, data)
 
 
 if __name__ == '__main__':
