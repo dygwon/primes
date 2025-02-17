@@ -32,7 +32,7 @@ class CompanyProfile(models.Model):
     dcf_diff = models.DecimalField(max_digits=15, decimal_places=5)
     dcf = models.DecimalField(max_digits=24, decimal_places=14)
     image = models.URLField()
-    ipo_date = models.CharField(max_length=10)
+    ipo_date = models.DateField()
     default_image = models.BooleanField()
     is_etf = models.BooleanField()
     is_actively_trading = models.BooleanField()
@@ -41,4 +41,48 @@ class CompanyProfile(models.Model):
     created = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.symbol
+        return f'CompanyProfile({self.symbol})'
+    
+
+class IncomeStatement(models.Model):
+    date = models.DateField()
+    symbol = models.CharField(max_length=5)
+    reported_currency = models.CharField(max_length=3)
+    cik = models.CharField(max_length=10)
+    filling_date = models.DateField()
+    accepted_date = models.DateTimeField()
+    calendar_year = models.CharField(max_length=4)
+    period = models.CharField(max_length=2)
+    revenue = models.BigIntegerField()
+    cost_of_revenue = models.BigIntegerField()
+    gross_profit = models.BigIntegerField()
+    gross_profit_ratio = models.DecimalField(max_digits=11, decimal_places=10)
+    research_and_development_expenses = models.BigIntegerField()
+    general_and_administrative_expenses = models.BigIntegerField()
+    selling_and_marketing_expenses = models.BigIntegerField()
+    selling_general_and_administrative_expenses = models.BigIntegerField()
+    other_expenses = models.BigIntegerField()
+    operating_expenses = models.BigIntegerField()
+    cost_and_expenses = models.BigIntegerField()
+    interest_income = models.BigIntegerField()
+    interest_expense = models.BigIntegerField()
+    depreciation_and_amortization = models.BigIntegerField()
+    ebitda = models.BigIntegerField()
+    ebitda_ratio = models.DecimalField(max_digits=11, decimal_places=10)
+    operating_income = models.BigIntegerField()
+    operating_income_ratio = models.DecimalField(max_digits=11, decimal_places=10)
+    total_other_income_expenses_net = models.BigIntegerField()
+    income_before_tax = models.BigIntegerField()
+    income_before_tax_ratio = models.DecimalField(max_digits=11, decimal_places=10)
+    income_tax_expense = models.BigIntegerField()
+    net_income = models.BigIntegerField()
+    net_income_ratio = models.DecimalField(max_digits=11, decimal_places=10)
+    eps = models.DecimalField(max_digits=5, decimal_places=2)
+    eps_diluted = models.DecimalField(max_digits=5, decimal_places=2)
+    weighted_average_shs_out = models.BigIntegerField()
+    weighted_average_shs_out_dil = models.BigIntegerField()
+    link = models.URLField()
+    final_link = models.URLField()
+
+    def __str__(self):
+        return f'IncomeStatement({self.symbol}, {self.period}, {self.calendar_year})'

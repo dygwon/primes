@@ -1,0 +1,42 @@
+{% for income_statement in income_statements %}
+    <h2>date: {{ income_statement.date }}</h2>
+    <h2>symbol: {{ income_statement.symbol }}</h2>
+    <ul>
+        <li>reported_currency: {{ income_statement.reported_currency }}</li>
+        <li>cik: {{ income_statement.cik }}</li>
+        <li>filling_date: {{ income_statement.filling_date }}</li>
+        <li>accepted_date: {{ income_statement.accepted_date }}</li>
+        <li>calendar_year: {{ income_statement.calendar_year }}</li>
+        <li>period: {{ income_statement.period }}</li>
+        <li>revenue: {{ income_statement.revenue }}</li>
+        <li>cost_of_revenue: {{ income_statement.cost_of_revenue }}</li>
+        <li>gross_profit: {{ income_statement.gross_profit }}</li>
+        <li>gross_profit_ratio: {{ income_statement.gross_profit_ratio }}</li>
+        <li>research_and_development_expenses: {{ income_statement.research_and_development_expenses }}</li>
+        <li>general_and_administrative_expenses: {{ income_statement.general_and_administrative_expenses }}</li>
+        <li>selling_and_marketing_expenses: {{ income_statement.selling_and_marketing_expenses }}</li>
+        <li>selling_general_and_administrative_expenses: {{ income_statement.selling_general_and_administrative_expenses }}</li>
+        <li>other_expenses: {{ income_statement.other_expenses }}</li>
+        <li>operating_expenses: {{ income_statement.operating_expenses }}</li>
+        <li>cost_and_expenses: {{ income_statement.cost_and_expenses }}</li>
+        <li>interest_income: {{ income_statement.interest_income }}</li>
+        <li>interest_expense: {{ income_statement.interest_expense }}</li>
+        <li>depreciation_and_amortization: {{ income_statement.depreciation_and_amortization }}</li>
+        <li>ebitda: {{ income_statement.ebitda }}</li>
+        <li>ebitda_ratio: {{ income_statement.ebitda_ratio }}</li>
+        <li>operating_income: {{ income_statement.operating_income }}</li>
+        <li>operating_income_ratio: {{ income_statement.operating_income_ratio }}</li>
+        <li>total_other_income_expenses_net: {{ income_statement.total_other_income_expenses_net }}</li>
+        <li>income_before_tax: {{ income_statement.income_before_tax }}</li>
+        <li>income_before_tax_ratio: {{ income_statement.income_before_tax_ratio }}</li>
+        <li>income_tax_expense: {{ income_statement.income_tax_expense }}</li>
+        <li>net_income: {{ income_statement.net_income }}</li>
+        <li>net_income_ratio: {{ income_statement.net_income_ratio }}</li>
+        <li>eps: {{ income_statement.eps }}</li>
+        <li>eps_diluted: {{ income_statement.eps_diluted }}</li>
+        <li>weighted_average_shs_out: {{ income_statement.weighted_average_shs_out }}</li>
+        <li>weighted_average_shs_out_dil: {{ income_statement.weighted_average_shs_out_dil }}</li>
+        <li>link: {{ income_statement.link }}</li>
+        <li>final_link: {{ income_statement.final_link }}</li>
+    </ul>
+{% endfor %}
