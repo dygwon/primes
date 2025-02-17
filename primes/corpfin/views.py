@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from .models import CompanyProfile, IncomeStatement, BalanceSheet
+from .models import (
+    CompanyProfile,
+    IncomeStatement,
+    BalanceSheet,
+    CashflowStatement
+)
 
 
 def index(request):
@@ -14,7 +19,8 @@ def company_profile(request, ticker):
     return render(
         request,
         'corpfin/company_profile.html',
-        {'company_profile': company_profile})
+        {'company_profile': company_profile}
+    )
 
 
 def income_statements(request, ticker):
@@ -22,7 +28,8 @@ def income_statements(request, ticker):
     return render(
         request,
         'corpfin/income_statements.html',
-        {'income_statements': income_statements})
+        {'income_statements': income_statements}
+    )
 
 
 def balance_sheets(request, ticker):
@@ -30,4 +37,14 @@ def balance_sheets(request, ticker):
     return render(
         request,
         'corpfin/balance_sheets.html',
-        {'balance_sheets': balance_sheets})
+        {'balance_sheets': balance_sheets}
+    )
+
+
+def cashflow_statements(request, ticker):
+    cashflow_statements = CashflowStatement.objects.filter(symbol=ticker)
+    return render(
+        request,
+        'corpfin/cashflow_statements.html',
+        {'cashflow_statements': cashflow_statements}
+    )

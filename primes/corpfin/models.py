@@ -146,3 +146,49 @@ class BalanceSheet(models.Model):
 
     def __str__(self):
         return f'BalanceSheet({self.symbol}, {self.period}, {self.calendar_year})'
+
+
+class CashflowStatement(models.Model):
+    date = models.DateField()
+    symbol = models.CharField(max_length=5)
+    reported_currency = models.CharField(max_length=3)
+    cik = models.CharField(max_length=10)
+    filling_date = models.DateField()
+    accepted_date = models.DateTimeField()
+    calendar_year = models.CharField(max_length=4)
+    period = models.CharField(max_length=2)
+    net_income = models.BigIntegerField()
+    depreciation_and_amortization = models.BigIntegerField()
+    deferred_income_tax = models.BigIntegerField(null=True)
+    stock_based_compensation = models.BigIntegerField(null=True)
+    change_in_working_capital = models.BigIntegerField()
+    accounts_receivables = models.BigIntegerField()
+    inventory = models.BigIntegerField(null=True)
+    accounts_payables = models.BigIntegerField()
+    other_working_capital = models.BigIntegerField(null=True)
+    other_non_cash_items = models.BigIntegerField(null=True)
+    net_cash_provided_by_operating_activities = models.BigIntegerField()
+    investments_in_property_plant_and_equipment = models.BigIntegerField(null=True)
+    acquisitions_net = models.BigIntegerField(null=True)
+    purchases_of_investments = models.BigIntegerField(null=True)
+    sales_maturities_of_investments = models.BigIntegerField(null=True)
+    other_investing_activities = models.BigIntegerField(null=True)
+    net_cash_used_for_investing_activities = models.BigIntegerField()
+    debt_repayment = models.BigIntegerField(null=True)
+    common_stock_issued = models.BigIntegerField(null=True)
+    common_stock_repurchased = models.BigIntegerField(null=True)
+    dividends_paid = models.BigIntegerField(null=True)
+    other_financing_activities = models.BigIntegerField(null=True)
+    net_cash_used_provided_by_financing_activities = models.BigIntegerField()
+    effect_of_forex_changes_on_cash = models.BigIntegerField(null=True)
+    net_change_in_cash = models.BigIntegerField()
+    cash_at_end_of_period = models.BigIntegerField()
+    cash_at_beginning_of_period = models.BigIntegerField()
+    operating_cash_flow = models.BigIntegerField()
+    capital_expenditure = models.BigIntegerField(null=True)
+    free_cash_flow = models.BigIntegerField()
+    link = models.URLField(null=True)
+    final_link = models.URLField(null=True)
+
+    def __str__(self):
+        return f'CashflowStatement({self.symbol}, {self.period}, {self.calendar_year})'

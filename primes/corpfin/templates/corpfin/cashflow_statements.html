@@ -1,0 +1,44 @@
+{% for cashflow_statement in cashflow_statements %}
+    <h2>date: {{ cashflow_statement.date }}</h2>
+    <ul>
+        <li>symbol: {{ cashflow_statement.symbol }}</li>
+        <li>reported_currency: {{ cashflow_statement.reported_currency }}</li>
+        <li>cik: {{ cashflow_statement.cik }}</li>
+        <li>filling_date: {{ cashflow_statement.filling_date }}</li>
+        <li>accepted_date: {{ cashflow_statement.accepted_date }}</li>
+        <li>calendar_year: {{ cashflow_statement.calendar_year }}</li>
+        <li>period: {{ cashflow_statement.period }}</li>
+        <li>net_income: {{ cashflow_statement.net_income }}</li>
+        <li>depreciation_and_amortization: {{ cashflow_statement.depreciation_and_amortization }}</li>
+        <li>deferred_income_tax: {{ cashflow_statement.deferred_income_tax }}</li>
+        <li>stock_based_compensation: {{ cashflow_statement.stock_based_compensation }}</li>
+        <li>change_in_working_capital: {{ cashflow_statement.change_in_working_capital }}</li>
+        <li>accounts_receivables: {{ cashflow_statement.accounts_receivables }}</li>
+        <li>inventory: {{ cashflow_statement.inventory }}</li>
+        <li>accounts_payables: {{ cashflow_statement.accounts_payables }}</li>
+        <li>other_working_capital: {{ cashflow_statement.other_working_capital }}</li>
+        <li>other_non_cash_items: {{ cashflow_statement.other_non_cash_items }}</li>
+        <li>net_cash_provided_by_operating_activities: {{ cashflow_statement.net_cash_provided_by_operating_activities }}</li>
+        <li>investments_in_property_plant_and_equipment: {{ cashflow_statement.investments_in_property_plant_and_equipment }}</li>
+        <li>acquisitions_net: {{ cashflow_statement.acquisitions_net }}</li>
+        <li>purchases_of_investments: {{ cashflow_statement.purchases_of_investments }}</li>
+        <li>sales_maturities_of_investments: {{ cashflow_statement.sales_maturities_of_investments }}</li>
+        <li>other_investing_activities: {{ cashflow_statement.other_investing_activities }}</li>
+        <li>net_cash_used_for_investing_activities: {{ cashflow_statement.net_cash_used_for_investing_activities }}</li>
+        <li>debt_repayment: {{ cashflow_statement.debt_repayment }}</li>
+        <li>common_stock_issued: {{ cashflow_statement.common_stock_issued }}</li>
+        <li>common_stock_repurchased: {{ cashflow_statement.common_stock_repurchased }}</li>
+        <li>dividends_paid: {{ cashflow_statement.dividends_paid }}</li>
+        <li>other_financing_activities: {{ cashflow_statement.other_financing_activities }}</li>
+        <li>net_cash_used_provided_by_financing_activities: {{ cashflow_statement.net_cash_used_provided_by_financing_activities }}</li>
+        <li>effect_of_forex_changes_on_cash: {{ cashflow_statement.effect_of_forex_changes_on_cash }}</li>
+        <li>net_change_in_cash: {{ cashflow_statement.net_change_in_cash }}</li>
+        <li>cash_at_end_of_period: {{ cashflow_statement.cash_at_end_of_period }}</li>
+        <li>cash_at_beginning_of_period: {{ cashflow_statement.cash_at_beginning_of_period }}</li>
+        <li>operating_cash_flow: {{ cashflow_statement.operating_cash_flow }}</li>
+        <li>capital_expenditure: {{ cashflow_statement.capital_expenditure }}</li>
+        <li>free_cash_flow: {{ cashflow_statement.free_cash_flow }}</li>
+        <li>link: {{ cashflow_statement.link }}</li>
+        <li>final_link: {{ cashflow_statement.final_link }}</li>
+    </ul>
+{% endfor %}

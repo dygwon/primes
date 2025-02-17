@@ -2,7 +2,7 @@ import os
 import requests
 from typing import TypeAlias
 from datetime import datetime
-from ...models import CompanyProfile, IncomeStatement, BalanceSheet
+from ...models import CompanyProfile, IncomeStatement, BalanceSheet, CashflowStatement
 from django.core.management.base import BaseCommand, CommandError
 
 
@@ -25,9 +25,12 @@ class Command(BaseCommand):
             # is_data = self._fetch_income_statements(ticker)
             # for i_statement in is_data:
             #     self._insert_income_statement_db(ticker, i_statement)
-            bs_data = self._fetch_balance_sheets(ticker)
-            for bs in bs_data:
-                self._insert_balance_sheet_db(ticker, bs)
+            # bs_data = self._fetch_balance_sheets(ticker)
+            # for bs in bs_data:
+            #     self._insert_balance_sheet_db(ticker, bs)
+            cf_data = self._fetch_cashflow_statements(ticker)
+            for cf_statement in cf_data:
+                self._insert_cashflow_statement_db(ticker, cf_statement)
 
     def _fetch_company_profile(self, ticker: str) -> CPJson:
         url = FMP_BASE_URL + '/profile' + '/' + ticker
@@ -57,6 +60,17 @@ class Command(BaseCommand):
         r = requests.get(url, params=params)
         if r.status_code != 200:
             raise CommandError(f'Failed to fetch balance sheet(s) for {ticker}: {r.status_code}')
+        data = r.json()
+        return data
+
+    def _fetch_cashflow_statements(self, ticker: str, period: str='annual') -> list[dict]:
+        url = FMP_BASE_URL + '/cash-flow-statement' + '/' + ticker
+        self.stdout.write(f'fetching from {url}')
+        params = FMP_BASE_PARAMS.copy()
+        params.update({'period': period})
+        r = requests.get(url, params=params)
+        if r.status_code != 200:
+            raise CommandError(f'Failed to fetch cashflow statement(s) for {ticker}: {r.status_code}')
         data = r.json()
         return data
 
@@ -205,3 +219,49 @@ class Command(BaseCommand):
             final_link=data['finalLink']
         )
         b_sheet.save()
+
+    def _insert_cashflow_statement_db(self, ticker: str, data: dict) -> None:
+        self.stdout.write(f'saving cashflow statement for {ticker}')
+        cf_statement = CashflowStatement(
+            date=datetime.strptime(data['date'], '%Y-%m-%d'), # type: ignore
+            symbol=data['symbol'],
+            reported_currency=data['reportedCurrency'],
+            cik=data['cik'],
+            filling_date=datetime.strptime(data['fillingDate'], '%Y-%m-%d'), # type: ignore
+            accepted_date=datetime.strptime(data['acceptedDate'], '%Y-%m-%d %H:%M:%S'), # type: ignore
+            calendar_year=data['calendarYear'],
+            period=data['period'],
+            net_income=data['netIncome'],
+            depreciation_and_amortization=data['depreciationAndAmortization'],
+            deferred_income_tax=data['deferredIncomeTax'],
+            stock_based_compensation=data['stockBasedCompensation'],
+            change_in_working_capital=data['changeInWorkingCapital'],
+            accounts_receivables=data['accountsReceivables'],
+            inventory=data['inventory'],
+            accounts_payables=data['accountsPayables'],
+            other_working_capital=data['otherWorkingCapital'],
+            other_non_cash_items=data['otherNonCashItems'],
+            net_cash_provided_by_operating_activities=data['netCashProvidedByOperatingActivities'],
+            investments_in_property_plant_and_equipment=data['investmentsInPropertyPlantAndEquipment'],
+            acquisitions_net=data['acquisitionsNet'],
+            purchases_of_investments=data['purchasesOfInvestments'],
+            sales_maturities_of_investments=data['salesMaturitiesOfInvestments'],
+            other_investing_activities=data['otherInvestingActivites'],
+            net_cash_used_for_investing_activities=data['netCashUsedForInvestingActivites'],
+            debt_repayment=data['debtRepayment'],
+            common_stock_issued=data['commonStockIssued'],
+            common_stock_repurchased=data['commonStockRepurchased'],
+            dividends_paid=data['dividendsPaid'],
+            other_financing_activities=data['otherFinancingActivites'],
+            net_cash_used_provided_by_financing_activities=data['netCashUsedProvidedByFinancingActivities'],
+            effect_of_forex_changes_on_cash=data['effectOfForexChangesOnCash'],
+            net_change_in_cash=data['netChangeInCash'],
+            cash_at_end_of_period=data['cashAtEndOfPeriod'],
+            cash_at_beginning_of_period=data['cashAtBeginningOfPeriod'],
+            operating_cash_flow=data['operatingCashFlow'],
+            capital_expenditure=data['capitalExpenditure'],
+            free_cash_flow=data['freeCashFlow'],
+            link=data['link'],
+            final_link=data['finalLink']
+        )
+        cf_statement.save()
