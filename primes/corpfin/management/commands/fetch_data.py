@@ -2,7 +2,7 @@ import os
 import requests
 from typing import TypeAlias
 from datetime import datetime
-from ...models import CompanyProfile, IncomeStatement
+from ...models import CompanyProfile, IncomeStatement, BalanceSheet
 from django.core.management.base import BaseCommand, CommandError
 
 
@@ -13,37 +13,94 @@ FMP_BASE_PARAMS = {'apikey': FMP_API_KEY}
 
 CPJson: TypeAlias = dict[str, str | float | int | bool]
 ISJson: TypeAlias = dict[str, str | float | int]
+BSJson: TypeAlias = dict[str, str | int]
 
 class Command(BaseCommand):
     help = 'Saves/updates a list of company profiles to the database.'
 
     def handle(self, *args, **options) -> None:
         for ticker in TICKERS:
-            cp_data = self._fetch_company_profile(ticker)
-            self._insert_company_profile_db(ticker, cp_data)
-            is_data = self._fetch_income_statements_annual(ticker)
-            for i_statement in is_data:
-                self._insert_income_statement_db(ticker, i_statement)
+            # cp_data = self._fetch_company_profile(ticker)
+            # self._insert_company_profile_db(ticker, cp_data)
+            # is_data = self._fetch_income_statements(ticker)
+            # for i_statement in is_data:
+            #     self._insert_income_statement_db(ticker, i_statement)
+            bs_data = self._fetch_balance_sheets(ticker)
+            for bs in bs_data:
+                self._insert_balance_sheet_db(ticker, bs)
 
     def _fetch_company_profile(self, ticker: str) -> CPJson:
         url = FMP_BASE_URL + '/profile' + '/' + ticker
         self.stdout.write(f'fetching from {url}')
         r = requests.get(url, params=FMP_BASE_PARAMS)
         if r.status_code != 200:
-            raise CommandError(f'Failed to fetch data for {ticker}: {r.status_code}')
+            raise CommandError(f'Failed to fetch company profile for {ticker}: {r.status_code}')
         data = r.json()[0]
         return data
     
-    def _fetch_income_statements_annual(self, ticker: str) -> list[ISJson]:
+    def _fetch_income_statements(self, ticker: str, period: str='annual') -> list[ISJson]:
         url = FMP_BASE_URL + '/income-statement' + '/' + ticker
         self.stdout.write(f'fetching from {url}')
         params = FMP_BASE_PARAMS.copy()
-        params.update({'period': 'annual'})
+        params.update({'period': period})
         r = requests.get(url, params=params)
         if r.status_code != 200:
-            raise CommandError(f'Failed to fetch income statement for {ticker}: {r.status_code}')
+            raise CommandError(f'Failed to fetch income statement(s) for {ticker}: {r.status_code}')
         data = r.json()
         return data
+    
+    def _fetch_balance_sheets(self, ticker: str, period: str='annual') -> list[BSJson]:
+        url = FMP_BASE_URL + '/balance-sheet-statement' + '/' + ticker
+        self.stdout.write(f'fetching from {url}')
+        params = FMP_BASE_PARAMS.copy()
+        params.update({'period': period})
+        r = requests.get(url, params=params)
+        if r.status_code != 200:
+            raise CommandError(f'Failed to fetch balance sheet(s) for {ticker}: {r.status_code}')
+        data = r.json()
+        return data
+
+    def _insert_company_profile_db(self, ticker: str, data: CPJson) -> None:
+        self.stdout.write(f'saving company profile for {ticker}')
+        cp = CompanyProfile(
+            symbol=data['symbol'],
+            price=data['price'],
+            beta=data['beta'],
+            vol_avg=data['volAvg'],
+            mkt_cap=data['mktCap'],
+            last_div=data['lastDiv'],
+            range=data['range'],
+            changes=data['changes'],
+            company_name=data['companyName'],
+            currency=data['currency'],
+            cik=data['cik'],
+            isin=data['isin'],
+            cusip=data['cusip'],
+            exchange=data['exchange'],
+            exchange_short_name=data['exchangeShortName'],
+            industry=data['industry'],
+            website=data['website'],
+            description=data['description'],
+            ceo=data['ceo'],
+            sector=data['sector'],
+            country=data['country'],
+            full_time_employees=data['fullTimeEmployees'],
+            phone=data['phone'],
+            address=data['address'],
+            city=data['city'],
+            state=data['state'],
+            zip=data['zip'],
+            dcf_diff=data['dcfDiff'],
+            dcf=data['dcf'],
+            image=data['image'],
+            ipo_date=datetime.strptime(data['ipoDate'], '%Y-%m-%d'), # type: ignore
+            default_image=data['defaultImage'],
+            is_etf=data['isEtf'],
+            is_actively_trading=data['isActivelyTrading'],
+            is_adr=data['isAdr'],
+            is_fund=data['isFund']
+        )
+        cp.save()
 
     def _insert_income_statement_db(self, ticker: str, data: ISJson) -> None:
         self.stdout.write(f'saving income statement for {ticker}')
@@ -89,44 +146,62 @@ class Command(BaseCommand):
         )
         i_statement.save()
 
-    def _insert_company_profile_db(self, ticker: str, data: CPJson) -> None:
-        self.stdout.write(f'saving company profile for {ticker}')
-        cp = CompanyProfile(
+    def _insert_balance_sheet_db(self, ticker: str, data: BSJson) -> None:
+        self.stdout.write(f'saving balance sheet for {ticker}')
+        b_sheet = BalanceSheet(
+            date=datetime.strptime(data['date'], '%Y-%m-%d'), # type: ignore
             symbol=data['symbol'],
-            price=data['price'],
-            beta=data['beta'],
-            vol_avg=data['volAvg'],
-            mkt_cap=data['mktCap'],
-            last_div=data['lastDiv'],
-            range=data['range'],
-            changes=data['changes'],
-            company_name=data['companyName'],
-            currency=data['currency'],
+            reported_currency=data['reportedCurrency'],
             cik=data['cik'],
-            isin=data['isin'],
-            cusip=data['cusip'],
-            exchange=data['exchange'],
-            exchange_short_name=data['exchangeShortName'],
-            industry=data['industry'],
-            website=data['website'],
-            description=data['description'],
-            ceo=data['ceo'],
-            sector=data['sector'],
-            country=data['country'],
-            full_time_employees=data['fullTimeEmployees'],
-            phone=data['phone'],
-            address=data['address'],
-            city=data['city'],
-            state=data['state'],
-            zip=data['zip'],
-            dcf_diff=data['dcfDiff'],
-            dcf=data['dcf'],
-            image=data['image'],
-            ipo_date=datetime.strptime(data['ipoDate'], '%Y-%m-%d'), # type: ignore
-            default_image=data['defaultImage'],
-            is_etf=data['isEtf'],
-            is_actively_trading=data['isActivelyTrading'],
-            is_adr=data['isAdr'],
-            is_fund=data['isFund']
+            filling_date=datetime.strptime(data['fillingDate'], '%Y-%m-%d'), # type: ignore
+            accepted_date=datetime.strptime(data['acceptedDate'], '%Y-%m-%d %H:%M:%S'), # type: ignore
+            calendar_year=data['calendarYear'],
+            period=data['period'],
+            cash_and_cash_equivalents=data['cashAndCashEquivalents'],
+            short_term_investments=data['shortTermInvestments'],
+            cash_and_short_term_investments=data['cashAndShortTermInvestments'],
+            net_receivables=data['netReceivables'],
+            inventory=data['inventory'],
+            other_current_assets=data['otherCurrentAssets'],
+            total_current_assets=data['totalCurrentAssets'],
+            property_plant_equipment_net=data['propertyPlantEquipmentNet'],
+            goodwill=data['goodwill'],
+            intangible_assets=data['intangibleAssets'],
+            goodwill_and_intangible_assets=data['goodwillAndIntangibleAssets'],
+            long_term_investments=data['longTermInvestments'],
+            tax_assets=data['taxAssets'],
+            other_non_current_assets=data['otherNonCurrentAssets'],
+            total_non_current_assets=data['totalNonCurrentAssets'],
+            other_assets=data['otherAssets'],
+            total_assets=data['totalAssets'],
+            account_payables=data['accountPayables'],
+            short_term_debt=data['shortTermDebt'],
+            tax_payables=data['taxPayables'],
+            deferred_revenue=data['deferredRevenue'],
+            other_current_liabilities=data['otherCurrentLiabilities'],
+            total_current_liabilities=data['totalCurrentLiabilities'],
+            long_term_debt=data['longTermDebt'],
+            deferred_revenue_non_current=data['deferredRevenueNonCurrent'],
+            deferred_tax_liabilities_non_current=data['deferredTaxLiabilitiesNonCurrent'],
+            other_non_current_liabilities=data['otherNonCurrentLiabilities'],
+            total_non_current_liabilities=data['totalNonCurrentLiabilities'],
+            other_liabilities=data['otherLiabilities'],
+            capital_lease_obligations=data['capitalLeaseObligations'],
+            total_liabilities=data['totalLiabilities'],
+            preferred_stock=data['preferredStock'],
+            common_stock=data['commonStock'],
+            retained_earnings=data['retainedEarnings'],
+            accumulated_other_comprehensive_income_loss=data['accumulatedOtherComprehensiveIncomeLoss'],
+            other_total_stockholders_equity=data['othertotalStockholdersEquity'],
+            total_stockholders_equity=data['totalStockholdersEquity'],
+            total_equity=data['totalEquity'],
+            total_liabilities_and_stockholders_equity=data['totalLiabilitiesAndStockholdersEquity'],
+            minority_interest=data['minorityInterest'],
+            total_liabilities_and_total_equity=data['totalLiabilitiesAndTotalEquity'],
+            total_investments=data['totalInvestments'],
+            total_debt=data['totalDebt'],
+            net_debt=data['netDebt'],
+            link=data['link'],
+            final_link=data['finalLink']
         )
-        cp.save()
+        b_sheet.save()

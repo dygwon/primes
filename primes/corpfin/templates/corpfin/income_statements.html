@@ -1,7 +1,7 @@
 {% for income_statement in income_statements %}
     <h2>date: {{ income_statement.date }}</h2>
-    <h2>symbol: {{ income_statement.symbol }}</h2>
     <ul>
+        <li>symbol: {{ income_statement.symbol }}</li>
         <li>reported_currency: {{ income_statement.reported_currency }}</li>
         <li>cik: {{ income_statement.cik }}</li>
         <li>filling_date: {{ income_statement.filling_date }}</li>

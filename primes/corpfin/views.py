@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 
-from .models import CompanyProfile, IncomeStatement
+from .models import CompanyProfile, IncomeStatement, BalanceSheet
 
 
 def index(request):
@@ -23,3 +23,11 @@ def income_statements(request, ticker):
         request,
         'corpfin/income_statements.html',
         {'income_statements': income_statements})
+
+
+def balance_sheets(request, ticker):
+    balance_sheets = BalanceSheet.objects.filter(symbol=ticker)
+    return render(
+        request,
+        'corpfin/balance_sheets.html',
+        {'balance_sheets': balance_sheets})
