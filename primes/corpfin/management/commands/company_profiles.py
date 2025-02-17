@@ -1,23 +1,29 @@
-import os
-import json
+import requests
+from typing import TypeAlias
+from ._constants import TICKERS, FMP_BASE_URL, FMP_API_KEY
 from ...models import CompanyProfile
-from ._data import DATA_DIR, TICKERS
 from django.core.management.base import BaseCommand
 
+
+CPJson: TypeAlias = dict[str, str | float | int | bool]
 
 class Command(BaseCommand):
     help = 'Saves/updates a list of company profiles to the database.'
 
     def handle(self, *args, **options) -> None:
         for ticker in TICKERS:
-            self.save_company_profile_db(ticker)
+            data = self._fetch_company_profile(ticker)
+            self.save_company_profile_db(ticker, data)
 
-    def save_company_profile_db(self, ticker: str) -> None:
-        file_name = f'{ticker}.json'
-        file_path = os.path.join(DATA_DIR, file_name)
-        self.stdout.write(f'saving/updating {file_path}')
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+    def _fetch_company_profile(self, ticker: str) -> CPJson:
+        url = FMP_BASE_URL + '/profile' + '/' + ticker
+        print(f'fetching from {url}')
+        r = requests.get(url, params={'apikey': FMP_API_KEY})
+        data = r.json()[0]
+        return data
+
+    def save_company_profile_db(self, ticker: str, data: CPJson) -> None:
+        self.stdout.write(f'saving/updating {ticker}')
         cp = CompanyProfile(
             symbol=data['symbol'],
             price=data['price'],

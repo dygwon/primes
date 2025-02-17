@@ -38,6 +38,7 @@ class CompanyProfile(models.Model):
     is_actively_trading = models.BooleanField()
     is_adr = models.BooleanField()
     is_fund = models.BooleanField()
+    created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.symbol

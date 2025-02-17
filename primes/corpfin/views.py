@@ -9,7 +9,8 @@ def index(request):
 
 
 def company_profile(request, ticker):
-    company_profile = get_object_or_404(CompanyProfile, symbol=ticker)
+    company_profile = CompanyProfile.objects.filter(
+        symbol=ticker).latest('created')
     return render(
         request,
         "corpfin/company_profile.html",
